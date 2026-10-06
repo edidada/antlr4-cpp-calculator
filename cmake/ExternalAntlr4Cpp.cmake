@@ -7,9 +7,9 @@ set(ANTLR4_INCLUDE_DIRS ${ANTLR4_ROOT}/runtime/Cpp/runtime/src)
 set(ANTLR4_GIT_REPOSITORY https://github.com/antlr/antlr4.git)
 
 if(NOT DEFINED ANTLR4_TAG)
-  # Set to branch name to keep library updated at the cost of needing to rebuild after 'clean'
-  # Set to commit hash to keep the build stable and does not need to rebuild after 'clean'
-  set(ANTLR4_TAG master)
+  # Pin to the release matching the ANTLR tool JAR version (4.7.1)
+  # to keep the runtime API compatible with generated code.
+  set(ANTLR4_TAG 4.7.1)
 endif()
 
 if(${CMAKE_GENERATOR} MATCHES "Visual Studio.*")
