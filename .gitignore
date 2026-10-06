@@ -1,3 +1,5 @@
 build/*
 external/antlr4_runtime/*
 src/generated/*
+.idea/
+.iml
