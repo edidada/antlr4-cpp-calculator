@@ -99,7 +99,7 @@ ExternalProject_Add_Step(
     DEPENDS antlr4_runtime
     BYPRODUCTS ${ANTLR4_STATIC_LIBRARIES}
     EXCLUDE_FROM_MAIN 1
-    WORKING_DIRECTORY ${ANTLR4_ROOT})
+    WORKING_DIRECTORY ${ANTLR4_ROOT}/runtime/Cpp)
 ExternalProject_Add_StepTargets(antlr4_runtime build_static)
 
 add_library(antlr4_static STATIC IMPORTED)
