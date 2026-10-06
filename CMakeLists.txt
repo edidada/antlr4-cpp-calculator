@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 14)
 add_definitions(-DANTLR4CPP_STATIC)
 
 # using /MD flag for antlr4_runtime (for Visual C++ compilers only)
-#set(ANTLR4_WITH_STATIC_CRT OFF)
+set(ANTLR4_WITH_STATIC_CRT OFF)
 
 # add external build for antlrcpp
 include(ExternalAntlr4Cpp)
