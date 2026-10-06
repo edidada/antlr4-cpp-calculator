@@ -57,19 +57,16 @@ elseif(${CMAKE_GENERATOR} MATCHES "Visual Studio.*")
   set(ANTLR4_BUILD_COMMAND
       ${CMAKE_COMMAND}
           --build .
-          --config $(Configuration)
-          --target)
+          --config $(Configuration))
 elseif(${CMAKE_GENERATOR} MATCHES "Xcode.*")
   set(ANTLR4_BUILD_COMMAND
       ${CMAKE_COMMAND}
           --build .
-          --config $(CONFIGURATION)
-          --target)
+          --config $(CONFIGURATION))
 else()
   set(ANTLR4_BUILD_COMMAND
       ${CMAKE_COMMAND}
-          --build .
-          --target)
+          --build .)
 endif()
 
 if(NOT DEFINED ANTLR4_WITH_STATIC_CRT)
@@ -96,7 +93,7 @@ ExternalProject_Add(
 ExternalProject_Add_Step(
     antlr4_runtime
     build_static
-    COMMAND ${ANTLR4_BUILD_COMMAND} antlr4_static
+    COMMAND ${ANTLR4_BUILD_COMMAND}
     # Depend on target instead of step (a custom command)
     # to avoid running dependent steps concurrently
     DEPENDS antlr4_runtime
