@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, ci ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-2022]
+        include:
+          - os: ubuntu-latest
+            calc_path: build/calc
+          - os: macos-latest
+            calc_path: build/calc
+          - os: windows-2022
+            calc_path: build/Release/calc.exe
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y uuid-dev
+
+      - name: Setup Java (for ANTLR code generation)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build ANTLR4 runtime (static)
+        run: cmake --build build --config Release --target antlr4_runtime-build_static
+
+      - name: Build calc
+        run: cmake --build build --config Release
+
+      - name: Run calc
+        run: |
+          echo "3 + 5" | ${{ matrix.calc_path }}

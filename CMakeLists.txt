@@ -11,8 +11,15 @@ set(CMAKE_CXX_STANDARD 14)
 # required if linking to static library
 add_definitions(-DANTLR4CPP_STATIC)
 
-# using /MD flag for antlr4_runtime (for Visual C++ compilers only)
-#set(ANTLR4_WITH_STATIC_CRT OFF)
+# ANTLR4 4.7.1 runtime is built with /MT (static CRT) by default.
+# Force the main project to match, otherwise we get LNK2038 mismatches.
+if(MSVC)
+  foreach(flag_var
+      CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    string(REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+  endforeach()
+endif()
 
 # add external build for antlrcpp
 include(ExternalAntlr4Cpp)

@@ -7,9 +7,9 @@ set(ANTLR4_INCLUDE_DIRS ${ANTLR4_ROOT}/runtime/Cpp/runtime/src)
 set(ANTLR4_GIT_REPOSITORY https://github.com/antlr/antlr4.git)
 
 if(NOT DEFINED ANTLR4_TAG)
-  # Set to branch name to keep library updated at the cost of needing to rebuild after 'clean'
-  # Set to commit hash to keep the build stable and does not need to rebuild after 'clean'
-  set(ANTLR4_TAG master)
+  # Pin to the release matching the ANTLR tool JAR version (4.7.1)
+  # to keep the runtime API compatible with generated code.
+  set(ANTLR4_TAG 4.7.1)
 endif()
 
 if(${CMAKE_GENERATOR} MATCHES "Visual Studio.*")
@@ -57,19 +57,16 @@ elseif(${CMAKE_GENERATOR} MATCHES "Visual Studio.*")
   set(ANTLR4_BUILD_COMMAND
       ${CMAKE_COMMAND}
           --build .
-          --config $(Configuration)
-          --target)
+          --config $(Configuration))
 elseif(${CMAKE_GENERATOR} MATCHES "Xcode.*")
   set(ANTLR4_BUILD_COMMAND
       ${CMAKE_COMMAND}
           --build .
-          --config $(CONFIGURATION)
-          --target)
+          --config $(CONFIGURATION))
 else()
   set(ANTLR4_BUILD_COMMAND
       ${CMAKE_COMMAND}
-          --build .
-          --target)
+          --build .)
 endif()
 
 if(NOT DEFINED ANTLR4_WITH_STATIC_CRT)
@@ -82,6 +79,9 @@ ExternalProject_Add(
   GIT_REPOSITORY ${ANTLR4_GIT_REPOSITORY}
   GIT_TAG ${ANTLR4_TAG}
   DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/external
+  PATCH_COMMAND ${CMAKE_COMMAND}
+      -DANTLR4_ROOT=${ANTLR4_ROOT}
+      -P ${CMAKE_SOURCE_DIR}/cmake/PatchAntlr4CMake.cmake
   BUILD_COMMAND ""
   BUILD_IN_SOURCE 1
   SOURCE_DIR ${ANTLR4_ROOT}
@@ -89,6 +89,7 @@ ExternalProject_Add(
   CMAKE_CACHE_ARGS
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DWITH_STATIC_CRT:BOOL=${ANTLR4_WITH_STATIC_CRT}
+      -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.5
   INSTALL_COMMAND ""
   EXCLUDE_FROM_ALL 1)
 
@@ -96,13 +97,13 @@ ExternalProject_Add(
 ExternalProject_Add_Step(
     antlr4_runtime
     build_static
-    COMMAND ${ANTLR4_BUILD_COMMAND} antlr4_static
+    COMMAND ${ANTLR4_BUILD_COMMAND}
     # Depend on target instead of step (a custom command)
     # to avoid running dependent steps concurrently
     DEPENDS antlr4_runtime
     BYPRODUCTS ${ANTLR4_STATIC_LIBRARIES}
     EXCLUDE_FROM_MAIN 1
-    WORKING_DIRECTORY ${ANTLR4_ROOT})
+    WORKING_DIRECTORY ${ANTLR4_ROOT}/runtime/Cpp)
 ExternalProject_Add_StepTargets(antlr4_runtime build_static)
 
 add_library(antlr4_static STATIC IMPORTED)
