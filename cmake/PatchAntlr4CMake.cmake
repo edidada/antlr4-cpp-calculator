@@ -12,14 +12,14 @@ if(EXISTS "${CMAKE_FILE}")
 
   # Count matches before replacement for diagnostics
   string(REGEX MATCHALL
-    "cmake_policy\\(SET[ \t]+CMP[0-9]+[ \t]+OLD\\)"
+    "[Cc][Mm][Aa][Kk][Ee]_[Pp][Oo][Ll][Ii][Cc][Yy]\\([ \t]*SET[ \t]+CMP[0-9]+[ \t]+OLD[ \t]*\\)"
     MATCHES "${CONTENT}")
   list(LENGTH MATCHES NUM_MATCHES)
   message(STATUS "Found ${NUM_MATCHES} cmake_policy(SET ... OLD) calls to remove")
 
-  # Remove lines like: cmake_policy(SET CMP0054 OLD)
+  # Remove lines like: CMAKE_POLICY(SET CMP0054 OLD)
   string(REGEX REPLACE
-    "cmake_policy\\(SET[ \t]+CMP[0-9]+[ \t]+OLD\\)"
+    "[Cc][Mm][Aa][Kk][Ee]_[Pp][Oo][Ll][Ii][Cc][Yy]\\([ \t]*SET[ \t]+CMP[0-9]+[ \t]+OLD[ \t]*\\)"
     ""
     CONTENT "${CONTENT}")
 
